@@ -1,14 +1,25 @@
-let obj = {
+type Obj = {
+    x: number
+    y: number
+    z?: string
+}
+
+let obj: Obj = {
     x: 100,
     y: 200
 }
 
-let obj2 = {
+type Obj2 = {
+    x: number
+    y: number
+}
+
+let obj2: Obj2 = {
     x: 100,
     y: 200
 }
 
-let obj3 = obj2
+let obj3: Obj2 = obj
 
 console.log(obj === obj2)
 console.log(obj3 === obj2)

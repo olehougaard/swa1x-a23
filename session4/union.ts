@@ -1,16 +1,25 @@
+type Person = {name: string, age: number | undefined}
 
+type Pet = "dog" | "cat" | "goldfish"
 
-let sa = ['a', 'b', 'c']
-let na = [1, 2, 3]
-let sna: (string|number)[] = sa
-let a: (string|number)[] = sna.concat(na)
-
-let b = (sa as (string|number)[]).concat(na)
-
-for(let sn of b) {
-    if (typeof sn === 'string') {
-        console.log(sn + "alkdj");
-    } else {
-        console.log(sn + 1)
+function expectedAge(p: Pet): void {
+    switch(p) {
+        case "dog": 
+            console.log(12)
+            break;
+        case "cat": 
+            console.log(10)
+            break;
+        case "goldfish":
+            console.log(1)
     }
+} 
+
+function birthday(p: Person): Person {
+    if (p.age === undefined)
+        return {name: p.name, age: 1}
+    return {name: p.name, age: p.age + 1}
 }
+
+type User = { type: "administrator", password: "password"} | {type: "clerk", salary: number}
+

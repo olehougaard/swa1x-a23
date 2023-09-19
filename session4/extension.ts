@@ -16,7 +16,7 @@ function createColored(color: number): Colored {
     return { getColor }
 }
 
-function ColoredHouse(address: string, color: number): Object {
+function ColoredHouse(address: string, color: number): House & Colored {
     return { ...createHouse(address), ...createColored(color) }
 }
 

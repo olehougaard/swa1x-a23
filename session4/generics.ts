@@ -4,10 +4,9 @@ function identityNaive(x: unknown) {
 
 const u = identityNaive("Hello") // Without generics, type of s is unknown
 
-type Vector = {
-    dx: number,
-    dy: number
-}
+function identity<T>(x: T) { return x }
+
+const u2 = identity("Hello")
 
 function nCopies<T>(n: number, value: T): T[] {
     const copies = new Array<T>(n)
@@ -19,16 +18,23 @@ function nCopies<T>(n: number, value: T): T[] {
 
 const hellos = nCopies(7, "Hello")
 
+type Vector = {
+    dx: number,
+    dy: number
+}
+
 type ColoredVector = Vector & { color: number }
 
-function transposeNaive(v: Vector) {
-    const temp = v.dx
-    v.dx = v.dy
-    v.dy = temp
-    return v
+function oppositeNaive(v: Vector) {
+    return {...v, dx: - v.dx, dy: -v.dy}
 }
 
 let cv: ColoredVector = {dx: 10, dy: 22, color: 0x3248f9}
 
-const v = transposeNaive(cv)
+// Error: cv = oppositeNaive(cv)
 
+function opposite<T extends Vector>(v: T): T {
+    return {...v, dx: - v.dx, dy: -v.dy}
+}
+
+cv = opposite(cv)
