@@ -71,9 +71,6 @@ const WaitingForGame = () => {
 }
 
 const Active = () => {
-  useEffect(() => {
-    document.title = 'Waiting for other player...'
-  })
   const {player} = useSelector((s: State) => s.game)
   const dispatch: Dispatch = useDispatch()
   return <div>
@@ -94,7 +91,7 @@ const WaitingForTurn = () => {
 const GameOver = () => {
   const {game} = useSelector((s: State) => s.game)
   useEffect(() => {
-    document.title = `Tic-tac-toe - {game.gameName} complete`
+    document.title = `Tic-tac-toe - ${game.gameName} complete`
   })
   const dispatch: Dispatch = useDispatch()
   const navigate = useNavigate();
@@ -109,7 +106,7 @@ const GameOver = () => {
 const Playing = () => {
   const {game, player} = useSelector((s: State) => s.game)
   useEffect(() => {
-    document.title = `Tic-tac-toe - Playing {game.gameName}`
+    document.title = `Tic-tac-toe - Playing ${game.gameName}`
   })
   return <div>
     <h1>Playing {game.gameName}</h1>
