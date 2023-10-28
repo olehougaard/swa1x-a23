@@ -23,7 +23,7 @@ export function createPresenter(init_model: Model, view: View): Presenter {
             const person: Person = await personResponse.json()
             model = model.addEmployee(employee).updatePerson(person)
             view.update(model)
-          } catch (e) {
+          } catch (e: any) {
             view.displayError(e.toString())
           }
         }

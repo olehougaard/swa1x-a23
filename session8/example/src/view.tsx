@@ -8,6 +8,7 @@ type Props = {person: Data, dispatcher: DispatchActionOrThunk<Model>}
 function dispatchHireAction(id: number, dispatcher: Props['dispatcher']) {
     const salary = window.prompt('Salary?')
     if (salary) {
+        // ... show that data is fetching
         dispatcher(hireThunk(id, Number.parseFloat(salary)))
     }
 }
