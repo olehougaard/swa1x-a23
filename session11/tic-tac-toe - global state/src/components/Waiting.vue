@@ -1,30 +1,26 @@
-<script lang="ts">
-import * as api from '@/api/api';
-import { model } from '@/api/store';
+<script setup lang="ts">
+  import type { Game, Player } from '@/api/model'
+  import * as api from '@/api/api'
+  import type { PropType } from 'vue'
+  import { defineProps, onMounted } from 'vue'
+  import { model } from '@/api/store';
 
-  export default {
-    data() {
-      return {model};
-    },
-    props: {
-      gameNumber: {
-        type: Number,
-        required: true
-      }
-    },
-    methods: {
-      async waitForPlayer() {
-        const game = await api.readGame(this.gameNumber)
-        if (game.ongoing)
-          this.model.startGame('X', game)
-        else 
-          setTimeout(this.waitForPlayer, 100)
-      }
-    },
-    mounted() {
-      this.waitForPlayer()
-    } 
+  const props = defineProps({
+    gameNumber: {
+      type: Number,
+      required: true
+    }
+  })
+
+  async function waitForPlayer() {
+    const game = await api.readGame(props.gameNumber)
+    if (game.ongoing)
+      model.startGame('X', game)
+    else 
+      setTimeout(waitForPlayer, 100)
   }
+
+  onMounted(waitForPlayer)
 </script>
 
 <template>

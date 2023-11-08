@@ -1,5 +1,5 @@
 import {reactive} from 'vue'
-import type {Game, GameState, Move, Player} from '@/api/model'
+import type {Game, GameState, Move, Player} from './model'
 
 export type Model = {
     games: Game[],

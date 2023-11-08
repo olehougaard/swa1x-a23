@@ -1,27 +1,14 @@
-<script lang="ts">
+<script setup lang="ts">
+  import { computed } from 'vue'
   import ActiveGameView from '@/components/ActiveGame.vue'
   import FinishedGameView from '@/components/FinishedGame.vue'
-  import {model} from '@/api/store'
+  import { model } from '@/api/store'
 
-  export default {
-    data() {
-      return {model}
-    },
-    computed: {
-      active() {
-        return !this.model.game?.stalemate && !this.model.game?.winState
-      },
-      activeComponent() {
-        return this.active? ActiveGameView : FinishedGameView
-      }
-    },
-    components: { ActiveGameView, FinishedGameView }
-  }
+  const active = computed(() => !model.game?.stalemate && !model.game?.winState)
 </script>
 
 <template>
-  <h1>Playing {{model.gameName}} </h1>
-  <keep-alive>
-    <component :is="activeComponent"/>
-  </keep-alive>
+    <h1>Playing {{model.game?.gameName}} </h1>
+    <active-game-view v-if='active'/>
+    <finished-game-view v-else/>
 </template>

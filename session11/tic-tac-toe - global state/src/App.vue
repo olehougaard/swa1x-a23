@@ -1,38 +1,17 @@
-<script lang="ts">
+<script setup lang="ts">
   import LobbyView from '@/components/Lobby.vue'
   import WaitingView from '@/components/Waiting.vue'
   import GameView from '@/components/Game.vue'
-  import {model} from './api/store'
+  import type { Game, GameState } from './api/model'
+  import { ref } from 'vue'
+  import { model } from '@/api/store'
+  
+  const gameState = ref<GameState>({ mode: 'no game' })
 
-  export default {
-    data() {
-      return {
-        model,
-        views: {
-          'no game': LobbyView,
-          waiting: WaitingView,
-          playing: GameView
-        }
-      }
-    },
-    provide() {
-      return {
-        goToLobby: () => {
-          this.model.endGame()
-        }
-      }
-    },
-    computed: {
-      mode() { return this.model.gameState.mode },
-      gameNumber() {
-        if (this.model.gameState.mode !== 'no game')
-          return this.model.gameState.game.gameNumber
-      },
-    },
-    components: { GameView, LobbyView, WaitingView }
-  }
 </script>
 
 <template>
-  <component :is="views[mode]" :gameNumber="gameNumber!"/>
+  <lobby-view v-if="model.gameState.mode=='no game'"/>
+  <waiting-view v-if="model.gameState.mode=='waiting'" :gameNumber="model.game?.gameNumber!"/>
+  <game-view v-if="model.gameState.mode=='playing'"/>
 </template>

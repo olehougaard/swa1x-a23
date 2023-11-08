@@ -1,57 +1,60 @@
-<script lang="ts">
+<script setup lang="ts">
+  import type { Game } from '@/api/model'
+  import { computed, defineEmits, onMounted } from 'vue'
   import * as api from '@/api/api'
   import BoardView from '@/components/Board.vue'
   import { model } from '@/api/store'
 
-  export default {
-    data() {
-      return { model }
-    },
-    computed: {
-      enabled() {
-        return this.model.player === this.model.game?.inTurn
-      },
-      finished() {
-        return this.model.game?.stalemate || this.model.game?.winState
-      },
-      board() {
-        return this.model.game?.board ?? []
-      }
-    },
-    methods: {
-      message() {
-        if (this.enabled)
-          return 'Your turn, ' + this.model.player
-        else
-          return 'Waiting for other player to move...'
-      },
-      async makeMove(x: number, y: number) {
-        if (this.enabled) {
-          const {move, ...props} = await api.createMove(this.model.game?.gameNumber!, {x, y, player: this.model.player!})
-          this.model.makeMove(move)
-          this.model.applyGameProperties(props)
-          if (!this.finished) this.waitForMove()
-        }
-      },
-      async waitForMove() {
-        const {moves, ...props} = await api.readMoves(this.model.game?.gameNumber!)
-        if (props.inTurn === this.model.player) {
-          const move = moves[moves.length - 1]
-          if (!move.conceded) this.model.makeMove(move)
-          this.model.applyGameProperties(props)
-        } else 
-          setTimeout(this.waitForMove, 1000)
-      },
-      async concede() {
-        const {winState} = await api.concede(this.model.game?.gameNumber!, this.model.player === 'X' ? 'O' : 'X')
-        this.model.applyGameProperties({winState})
-      }
-    },
-    mounted() {
-      if (this.model.game?.inTurn !== this.model.player) this.waitForMove()
-    },
-    components: { BoardView }
+  const enabled = computed(() => model.player === model.game?.inTurn)
+
+  let emit = defineEmits({
+    gameFinished(game: Game) {
+      return game.stalemate || game.winState
+    }
+  })
+
+  const board = computed(() => model.game?.board ?? [[]])
+
+  function finished() {
+    return model.game?.stalemate || model.game?.winState
   }
+
+  function message() {
+    if (enabled.value)
+      return 'Your turn, ' + model.player
+    else
+      return 'Waiting for other player to move...'
+  }
+
+  async function makeMove(x: number, y: number) {
+    if (enabled.value) {
+      const {move, ...move_props} = await api.createMove(model.game?.gameNumber!, {x, y, player: model.player!})
+      model.makeMove(move)
+      model.applyGameProperties(move_props)
+      if (!finished())
+        waitForMove()
+    }
+  }
+
+  async function waitForMove() {
+    const { moves, ...game_props } = await api.readMoves(model.game?.gameNumber!)
+    if (game_props.inTurn === model.player) {
+      const move = moves[moves.length - 1]
+      if (!move.conceded) model.makeMove(move)
+      model.applyGameProperties(game_props)
+    } else 
+      setTimeout(waitForMove, 1000)
+  }
+
+  async function concede() {
+    const {winState} = await api.concede(model.game?.gameNumber!, model.player === 'X' ? 'O' : 'X')
+    model.applyGameProperties({winState})
+  }
+
+  onMounted(() => {
+    if (model.game?.inTurn !== model.player) waitForMove()
+  })
+
 </script>
 
 <template>

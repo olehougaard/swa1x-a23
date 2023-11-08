@@ -1,4 +1,4 @@
-import type { Game, Move, Player } from "@/api/model"
+import type { Game, Move, Player } from "./model"
 
 const callServer = async <Return>(url: string, init: RequestInit = {}): Promise<Return> => {
     const response = await fetch(url, { ...init, headers: {...init.headers, 'Accept': 'application/json', 'Content-Type': 'application/json'}})
