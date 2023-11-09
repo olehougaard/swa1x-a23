@@ -1,19 +1,24 @@
 <script setup lang="ts">
-  import type { Game } from '@/api/model'
   import * as api from '@/api/api'
-  import { ref } from 'vue'
-  import { model } from '@/api/store'
+  import { ref, onMounted, onUnmounted } from 'vue'
+  import { store } from '@/api/store'
+  const model = store()
 
-
-  const games = ref([] as Game[])
+  let active = true
 
   async function findGames() {
+    if (!active) return
     const gs = await api.readGamesList()
-    games.value = gs
+    if (gs.length != model.games.length || gs.some((g, idx) => g.gameNumber != model.games[idx].gameNumber))
+      model.games = gs
     setTimeout(findGames, 250)
   }
 
-  setTimeout(findGames, 0)
+  onMounted(() => { 
+    active = true
+    setTimeout(findGames, 0)
+  })
+  onUnmounted(() => { active = false })
 
   const gameName = ref('game')
 
@@ -29,6 +34,6 @@
 </script>
 
 <template>
-  <div v-for="game in games">{{game.gameName}} <button @click="join(game.gameNumber)">Join</button></div>
+  <div v-for="game in model.games">{{game.gameName}} <button @click="join(game.gameNumber)">Join</button></div>
   <input type="text" v-model="gameName"/> <button @click="newGame()">Create</button>
 </template>

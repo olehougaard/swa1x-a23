@@ -1,11 +1,10 @@
-import {reactive} from 'vue'
+import {reactive, ref} from 'vue'
 import type {Game, GameState, Move, Player} from './model'
 
 export type Model = {
-    games: Game[],
     readonly gameState: Readonly<GameState>,
     readonly gameName?: string,
-    readonly game?: Game,
+    readonly game: Partial<Game>,
     readonly player?: Player,
     endGame(): void,
     waitForPlayer(waitingPlayer: Player, game: Game): void,
@@ -14,12 +13,39 @@ export type Model = {
     applyGameProperties(props: Partial<Game>): void,
 }
 
+const gameState = ref({mode: 'no game'} as GameState)
+
+function endGame() {
+    gameState.value = {mode: 'no game'}
+}
+
+function waitForPlayer(waitingPlayer: Player, game: Game) {
+  gameState.value = {mode: 'waiting', player: waitingPlayer, game}
+}
+
+function startGame(player: Player, game: Game) {
+  gameState.value = {mode: 'playing', player, game}
+}
+
+function makeMove(m: Move) {
+    if (gameState.value.mode !== 'no game') {
+        gameState.value.game.board[m.y][m.x] = m.player
+    }
+}
+
+function applyGameProperties(props: Partial<Game>) {
+    if (gameState.value.mode !== 'no game') {
+        gameState.value.game = {...gameState.value.game, ...props}
+    }
+}
+
 export const model: Model = reactive({
-    games: [] as Game[], 
-    gameState: {mode: 'no game'} as GameState,
-    get game(): Game | undefined {
+    get gameState(): GameState { return gameState.value },
+    get game(): Partial<Game> {
         if (this.gameState.mode !== 'no game')
             return this.gameState.game
+        else
+            return {}
     },
     get player(): Player | undefined {
         if (this.gameState.mode !== 'no game')
@@ -29,23 +55,9 @@ export const model: Model = reactive({
         if (this.gameState.mode !== 'no game')
             return this.gameState.game.gameName
     },
-    endGame() {
-        this.gameState.mode = 'no game'
-    },
-    waitForPlayer(waitingPlayer: Player, game: Game) {
-        this.gameState = {mode: 'waiting', player: waitingPlayer, game}
-    },
-    startGame(player: Player, game: Game) {
-        this.gameState = {mode: 'playing', player, game}
-    },
-    makeMove(m: Move) {
-        if (this.gameState.mode !== 'no game') {
-            this.gameState.game.board[m.y][m.x] = m.player
-        }
-    },
-    applyGameProperties(props: Partial<Game>) {
-        if (this.gameState.mode !== 'no game') {
-            this.gameState.game = {...this.gameState.game, ...props}
-        }
-    }
+    endGame,
+    waitForPlayer,
+    startGame,
+    makeMove,
+    applyGameProperties
 })

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-    import * as api from '@/api/api'
+  import * as api from '@/api/api'
   import { defineProps, onMounted } from 'vue'
-  import { model } from '@/api/store';
+  import { store } from '@/api/store';
+  const model = store()
 
   const props = defineProps({
     gameNumber: {

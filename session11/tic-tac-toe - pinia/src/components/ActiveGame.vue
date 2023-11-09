@@ -3,9 +3,18 @@
   import { computed, defineEmits, onMounted } from 'vue'
   import * as api from '@/api/api'
   import BoardView from '@/components/Board.vue'
-  import { model } from '@/api/store'
+  import { store } from '@/api/store'
+  const model = store()
 
+  console.log(model.player)
+  
   const enabled = computed(() => model.player === model.game.inTurn)
+
+  let emit = defineEmits({
+    gameFinished(game: Game) {
+      return game.stalemate || game.winState
+    }
+  })
 
   const board = computed(() => model.game.board ?? [[]])
 

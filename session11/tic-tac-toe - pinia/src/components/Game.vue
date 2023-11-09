@@ -2,7 +2,8 @@
   import { computed } from 'vue'
   import ActiveGameView from '@/components/ActiveGame.vue'
   import FinishedGameView from '@/components/FinishedGame.vue'
-  import { model } from '@/api/store'
+  import { store } from '@/api/store'
+  const model = store()
 
   const active = computed(() => !model.game.stalemate && !model.game.winState)
 </script>

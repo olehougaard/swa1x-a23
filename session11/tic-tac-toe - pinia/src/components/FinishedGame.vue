@@ -1,9 +1,10 @@
 <script setup lang="ts">
   import { computed } from 'vue'
   import BoardView from '@/components/Board.vue'
-  import { model } from '@/api/store'
+  import { store } from '@/api/store'
+  const model = store()
 
-  const board = computed(() => model.game?.board ?? [[]])
+  const board = computed(() => model.game.board ?? [[]])
 
   function message() {
       if (model.game.stalemate) 

@@ -2,7 +2,8 @@
   import LobbyView from '@/components/Lobby.vue'
   import WaitingView from '@/components/Waiting.vue'
   import GameView from '@/components/Game.vue'
-  import { model } from '@/api/store'
+  import { store } from '@/api/store'
+  const model = store()
 </script>
 
 <template>
