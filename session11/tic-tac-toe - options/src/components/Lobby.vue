@@ -4,20 +4,12 @@
   import { ref } from 'vue'
 
   const initGames: Game[] = await api.readGamesList()
-  const games = ref(initGames)
-
-  async function findGames() {
-    const gs = await api.readGamesList()
-    games.value = gs
-    setTimeout(findGames, 250)
-  }
-
-  findGames()
 
   export default {
     data() {
       return {
-        games,
+        active: true,
+        games: initGames,
         gameName: 'game'
       }
     },
@@ -36,8 +28,21 @@
       },
       async join(gameNumber: number) {
         this.joinGame(api.joinGame(gameNumber))
+      },
+      async findGames() {
+        if (!this.active) return;
+        const gs = await api.readGamesList()
+        this.games = gs
+       setTimeout(() => this.findGames(), 250)
       }
-    }
+    },
+    mounted() {
+        this.active = true
+        this.findGames()
+    },
+    unmounted() {
+        this.active = false
+    },
   }
 </script>
 
