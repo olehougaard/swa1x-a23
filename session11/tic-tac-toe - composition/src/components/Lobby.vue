@@ -1,13 +1,14 @@
 <script setup lang="ts">
   import type { Game } from '@/api/model'
   import * as api from '@/api/api'
+  import definePoll from '@/api/polling'
   import { ref, onMounted, onUnmounted, defineEmits } from 'vue'
 
   const initGames: Game[] = []
   const games = ref(initGames)
 
   let active = true
-
+  
   async function findGames() {
     if (!active) return
     const gs = await api.readGamesList()
@@ -23,6 +24,11 @@
   onUnmounted(() => {
     active = false
   })
+
+  // definePoll(async () => {
+  //   games.value = await api.readGamesList()
+  //   return true
+  // })
 
   const gameName = ref('game')
 
